@@ -2,27 +2,29 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const bodyParser = require("body-parser");
+const cors = require("cors");
 require("dotenv/config");
-
-app.use(bodyParser.json());
-
-// Import Routes
-const postsRoute = require("./routes/posts");
-app.use("/posts", postsRoute);
 
 // Middleware example
 // app.use("/posts", () => {
 //     console.log("This is from middleware");
 // });
 
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
+// Import Routes
+
+const postsRoute = require("./routes/posts");
+app.use("/posts", postsRoute);
+
+const insurancePolicyRoute = require("./routes/insurancePolicies");
+app.use("/insurancePolicies", insurancePolicyRoute);
+
 // Routes
 app.get("/", (req, res) => {
     res.send("You are on home");
 });
-
-// app.get("/posts", (req, res) => {
-//     res.send("You are on post page");
-// });
 
 mongoose.connect(
     "mongodb://rootuser:rootpass@localhost:27017/post?authSource=admin",
