@@ -14,29 +14,26 @@ router.get("/", async (req, res) => {
     }
 });
 
-// policy_number: {
-//     type: String,
-//     required: true,
-// },
-// effective_start: {
-//     type: Date,
-//     required: true,
-// },
-// effective_end: {
-//     type: Date,
-//     required: true,
-// },
-// property_value: {
-//     type: String,
-//     required: true,
-// },
-// premium: {
-//     type: String,
-//     required: true,
-// },
-
-// InsurancePolicy one InsurancePolicy
+// Insert one InsurancePolicy
 router.post("/", async (req, res) => {
+    const insurancePolicy = new InsurancePolicy({
+        username: req.body.username,
+        policy_number: req.body.policy_number,
+        effective_start: req.body.effective_start,
+        effective_end: req.body.effective_end,
+        property_value: req.body.property_value,
+        premium: req.body.premium,
+    });
+    try {
+        const savedInsurancePolicy = await insurancePolicy.save();
+        res.json(savedInsurancePolicy);
+    } catch (err) {
+        res.json({ message: err });
+    }
+});
+
+// Insert multiple InsurancePolicy
+router.post("/postMultiple", async (req, res) => {
     const insurancePolicy = new InsurancePolicy({
         username: req.body.username,
         policy_number: req.body.policy_number,
@@ -90,11 +87,11 @@ router.delete("/:InsurancePolicyID", async (req, res) => {
 });
 
 // Update a InsurancePolicy
-router.patch("/:InsurancePolicyID", async (req, res) => {
+router.patch("/:username", async (req, res) => {
     try {
         const updatedInsurancePolicy = await InsurancePolicy.updateOne(
-            { _id: req.params.InsurancePolicyID },
-            { $set: { title: req.body.title } }
+            { username: req.params.username },
+            { $set: { property_value: req.body.property_value } }
         );
         res.json(updatedInsurancePolicy);
     } catch (error) {
