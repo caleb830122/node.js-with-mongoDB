@@ -57,6 +57,35 @@ app.get("/img", (req, res) => {
     });
 });
 
+app.get("/img/:name", (req, res) => {
+    imgModel.find({ name: req.params.name }, (err, items) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("An error occurred", err);
+        } else {
+            // res.render("imagesPage", { items: items });
+            // console.log({ items: items.img });
+            if (items.length != 0) {
+                var img = Buffer.from(items[0].img.data, "base64");
+
+                var images = [img];
+                const formatedImages = images
+                    .map((buffer) => {
+                        return `<img src="data:image/png;base64,${buffer.toString(
+                            "base64"
+                        )}"/>`;
+                    })
+                    .join("");
+                //     res.set({ "Content-Type": "image/png" });
+                //     res.send({ items: items.img });
+                res.send(formatedImages);
+            } else {
+                res.status(500).send("Image for this user does not exist");
+            }
+        }
+    });
+});
+
 app.post("/img", upload.single("image"), (req, res, next) => {
     var obj = {
         name: req.body.name,
@@ -73,7 +102,7 @@ app.post("/img", upload.single("image"), (req, res, next) => {
             console.log(err);
         } else {
             // item.save();
-            res.redirect("/");
+            res.redirect("/img");
         }
     });
 });
